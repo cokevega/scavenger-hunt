@@ -10,16 +10,12 @@ const routes: Routes = [
     component: GameComponent
   },
   {
-    path: 'score',
+    path: 'score/:id',
     component: ScoreComponent
   },
   {
     path: 'register',
     component: RegisterComponent
-  },
-  {
-    path: '',
-    redirectTo: 'register'
   },
   {
     path: '**',

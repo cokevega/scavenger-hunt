@@ -8,6 +8,10 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './register/register.component';
 import { ScoreComponent } from './score/score.component';
 import { GameComponent } from './game/game.component';
+import { SharedModule } from './shared/shared.module';
+
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,9 +21,12 @@ import { GameComponent } from './game/game.component';
     GameComponent
   ],
   imports: [
+    AngularSvgIconModule.forRoot(),
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     ReactiveFormsModule,
+    SharedModule
   ],
   providers: [],
   bootstrap: [AppComponent]
