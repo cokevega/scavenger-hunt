@@ -1,0 +1,27 @@
+# Scavenger Hunt (2021, June)
+### Demo development guide
+This project was developed with Angular. However, feel free to use any other framework or module bundler. We created a new project with Angular CLI and use only two modules, the global *app module* and *shared module* (last one created by us) due to the small size of this project. We use the browser's local storage as a backend, but we suggest the user to use a real database if the project has a bigger scope. The structure consists on three main components, each one with a specific task.
+* **Register**: this one shows you a simple register form to introduce name, last name and email, as well as accept the terms and conditions. Your data will be storaged and now you can access to the *game component*.
+* **Game**: here the app checks your browser's local storage to look for an email and, if there is not an email registered, you will be redirected to the *register component*.
+* **Score**: you will be redirected here when you have taken the coin at the *game component*. In this screen you can see the points you have added to your total score and, obviously, your total score.
+
+We created also the *header component* in order to create here the header of the application, shared by the three main components. Each component has got its **own CSS file**, in order to customize each one separately, and includes the *header component* (**Onirix's logo** image in our case) at the begining. You can also create a *footer component* and put it at the end of the components.
+
+The *register component* uses the *ReactiveFormsModule* to evaluate the form's validity (all fields are **required**, the email must have a **valid email format** and the user have to **accept the terms**). The form will not be submitted if the previous conditions are not true. Without be registered, the user will not be able to access the *game component*.
+
+The *game component* shows, first of all, a screen that gives a short explain of the game: each coin has a different colour and a different score, which will be added to the total score. The coin that will be rendered deppends on the parameters sent by the URL. We use maps (*Map*) to make the relationship between the id received by the URL and the colour and between the id and the score. In this component, you will need to install via *npm* and import a 3D library (*three.js*, for example). When the user clicks on the *Let's play* button, the app launches the **Onirix Web AR SDK**, which automatically request camera and sensor access, instantiate camera and canvas and check the license. The process to integrate the SDK with your app is quite easy (for more information, see https://docs.onirix.com/onirix-sdk/web-ar):
+* First of all, you have to create an **Onirix project** with at least an image scene. In this scene you include your **marker image**. The user who wants to see the experience must scan this image. You should change your project's configuration and mark it as *Public*.
+* Then, you **add the Onirix Web SDK** to your page html head tag (`<script src="https://sdk.onirix.com/0.1.0/ox-sdk.js"></script>`).
+* In the components you want to use the SDK, if you use Angular, you have to **declare the global variables** from the previous script you need to use (`declare const OX: any;
+declare const OnirixSDK: any;`).
+* Create a configuration object which includes *token* (your project's **web token**) and *mode* (the Onirix SDK **tracking mode**, in this case, *OnirixSDK.TrackingMode.Image*).
+* Call the init function, sending the config object as a parameter, to launch the SDK.
+* This function returns a promise with a parameter (the canvas), so, when resolved, you can **set up the complete scene**: a renderer, a camera (using `OX.getCameraParameters()` to get the parameters), lights... You should also subscribe the **SDK events** (`OnirixSDK.Events.OnDetected`, `OnirixSDK.Events.OnLost`, `OnirixSDK.Events.OnPose` and `OnirixSDK.Events.OnResize`), in order to get a full functionality of the app. The following actions are strongly recommended for these events:
+    * *OnDetected*: load/create all components/events you want to render (meshes, 3D models, click events...) and add them to the scene.
+    * *OnPose*: update the 3D camera in function of the new pose.
+    * *OnLost*: remove all the elements from the scene.
+    * *OnResize*: update camera params, adapting them to the new size.
+
+For this project, we use a **3D model** (created by us with *Blender*) for the coin, that is loaded at the begining. We animated this model to make a beautifull effect when the user haunts it (via *gsap* library). The coin's color changes in function of the id sent by the URL. At the end of the coin's animation, we show to the user the score he has just obtained via **3D text**. We create/set/delete variables from the local storage to save/rescue/remove the following information: if the coin is **repeated**, the new **total score**, the **score added** and the **coin's id**.
+
+The *score component* rescues variables from the local storage to **show the result**. If the coin caught has already been collected, the points will not be added to the score. Otherwise, the total score will be increased. This component report to the user his/her total score and if the coin was already haunted (each coin has a different colour).
